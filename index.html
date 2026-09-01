@@ -1,0 +1,2079 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Z3RA // PERSONAL TERMINAL</title>
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Space+Mono:wght@400;700&display=swap');
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+:root {
+    --bg: #050608;
+    --panel: rgba(10, 13, 18, .88);
+    --panel2: rgba(18, 22, 28, .9);
+    --cyan: #79f6ff;
+    --pink: #ff3fa4;
+    --purple: #9d65ff;
+    --red: #ff365c;
+    --white: #e9f1f2;
+    --muted: #68747c;
+    --line: rgba(121,246,255,.25);
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    min-height: 100vh;
+    overflow: hidden;
+    background:
+        radial-gradient(circle at 20% 80%, rgba(157,101,255,.12), transparent 30%),
+        radial-gradient(circle at 80% 20%, rgba(255,63,164,.10), transparent 30%),
+        #050608;
+    color: var(--white);
+    font-family: "Space Mono", monospace;
+}
+
+/* =========================
+   CRT / SCREEN EFFECT
+========================= */
+
+body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: 9998;
+    pointer-events: none;
+
+    background:
+        repeating-linear-gradient(
+            to bottom,
+            rgba(255,255,255,.025) 0px,
+            rgba(255,255,255,.025) 1px,
+            transparent 2px,
+            transparent 5px
+        );
+}
+
+body::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: 9997;
+    pointer-events: none;
+
+    background: radial-gradient(
+        ellipse at center,
+        transparent 45%,
+        rgba(0,0,0,.72) 100%
+    );
+}
+
+/* =========================
+   BOOT SCREEN
+========================= */
+
+#boot {
+    position: fixed;
+    inset: 0;
+    z-index: 10000;
+    background: #030405;
+    padding: 40px;
+    font-size: 13px;
+    color: var(--cyan);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.boot-title {
+    font-family: Orbitron, sans-serif;
+    font-size: clamp(40px, 9vw, 110px);
+    font-weight: 900;
+    letter-spacing: -5px;
+    margin-bottom: 30px;
+}
+
+.boot-title span {
+    color: var(--pink);
+}
+
+#bootText {
+    line-height: 2;
+    color: #9aa;
+}
+
+.boot-bar {
+    width: 330px;
+    max-width: 80vw;
+    height: 4px;
+    background: #222;
+    margin-top: 20px;
+}
+
+.boot-progress {
+    width: 0%;
+    height: 100%;
+    background: var(--cyan);
+    box-shadow: 0 0 15px var(--cyan);
+    transition: width .2s;
+}
+
+/* =========================
+   DESKTOP
+========================= */
+
+#desktop {
+    width: 100vw;
+    height: 100vh;
+    position: relative;
+    overflow: hidden;
+    opacity: 0;
+    transition: opacity 1s;
+}
+
+/* city background */
+
+.city {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    opacity: .75;
+    pointer-events: none;
+}
+
+.sky {
+    position: absolute;
+    inset: 0;
+    background:
+        linear-gradient(
+            to bottom,
+            #070b12 0%,
+            #111423 48%,
+            #08090d 100%
+        );
+}
+
+.grid {
+    position: absolute;
+    bottom: -150px;
+    left: -20%;
+    width: 140%;
+    height: 65%;
+    transform: perspective(500px) rotateX(60deg);
+
+    background:
+        linear-gradient(rgba(121,246,255,.08) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(121,246,255,.08) 1px, transparent 1px);
+
+    background-size: 70px 70px;
+}
+
+.buildings {
+    position: absolute;
+    bottom: 100px;
+    left: 0;
+    right: 0;
+    height: 55%;
+    display: flex;
+    align-items: end;
+    gap: 7px;
+}
+
+.building {
+    flex: 1;
+    min-width: 25px;
+    background:
+        linear-gradient(
+            90deg,
+            #080a0e,
+            #171b23,
+            #080a0e
+        );
+    border: 1px solid #252d35;
+    position: relative;
+}
+
+.building::before {
+    content: "";
+    position: absolute;
+    inset: 15px;
+    background:
+        repeating-linear-gradient(
+            to bottom,
+            rgba(121,246,255,.35) 0 3px,
+            transparent 3px 22px
+        );
+    opacity: .45;
+}
+
+.b1 { height: 65%; }
+.b2 { height: 85%; }
+.b3 { height: 45%; }
+.b4 { height: 78%; }
+.b5 { height: 58%; }
+.b6 { height: 92%; }
+.b7 { height: 52%; }
+.b8 { height: 74%; }
+.b9 { height: 43%; }
+.b10 { height: 68%; }
+
+/* =========================
+   TOP BAR
+========================= */
+
+.topbar {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 58px;
+    z-index: 100;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    padding: 0 20px;
+
+    background: rgba(3,5,7,.9);
+    border-bottom: 1px solid var(--line);
+    backdrop-filter: blur(12px);
+}
+
+.brand {
+    font-family: Orbitron, sans-serif;
+    font-weight: 900;
+    font-size: 22px;
+    letter-spacing: 5px;
+}
+
+.brand span {
+    color: var(--pink);
+}
+
+.status {
+    display: flex;
+    gap: 22px;
+    font-size: 9px;
+    color: var(--muted);
+}
+
+.status b {
+    color: var(--cyan);
+}
+
+/* =========================
+   DESKTOP ICONS
+========================= */
+
+.icons {
+    position: absolute;
+    top: 90px;
+    left: 25px;
+    z-index: 20;
+
+    display: grid;
+    grid-template-columns: 90px;
+    gap: 18px;
+}
+
+.icon {
+    width: 80px;
+    text-align: center;
+    cursor: pointer;
+    user-select: none;
+    transition: .2s;
+}
+
+.icon:hover {
+    transform: translateY(-4px);
+}
+
+.icon-symbol {
+    width: 55px;
+    height: 55px;
+    margin: auto;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border: 1px solid var(--line);
+    background: rgba(5,8,12,.75);
+
+    color: var(--cyan);
+    font-family: Orbitron, sans-serif;
+    font-size: 19px;
+
+    box-shadow:
+        inset 0 0 15px rgba(121,246,255,.05),
+        0 0 15px rgba(121,246,255,.04);
+}
+
+.icon:nth-child(2) .icon-symbol {
+    color: var(--pink);
+}
+
+.icon:nth-child(3) .icon-symbol {
+    color: var(--purple);
+}
+
+.icon:nth-child(4) .icon-symbol {
+    color: var(--red);
+}
+
+.icon:nth-child(5) .icon-symbol {
+    color: #fff;
+}
+
+.icon-name {
+    font-size: 8px;
+    margin-top: 7px;
+    color: #a5adb2;
+    letter-spacing: 1px;
+}
+
+/* =========================
+   CLOCK
+========================= */
+
+.clock {
+    position: absolute;
+    bottom: 30px;
+    left: 30px;
+    z-index: 20;
+}
+
+.time {
+    font-family: Orbitron, sans-serif;
+    font-size: 28px;
+    letter-spacing: 3px;
+}
+
+.date {
+    font-size: 8px;
+    color: var(--muted);
+}
+
+/* =========================
+   WINDOWS
+========================= */
+
+.window {
+    position: absolute;
+    z-index: 50;
+
+    width: 520px;
+    max-width: calc(100vw - 30px);
+    min-height: 300px;
+
+    background: var(--panel);
+    border: 1px solid var(--line);
+
+    box-shadow:
+        0 20px 70px rgba(0,0,0,.7),
+        inset 0 0 35px rgba(121,246,255,.025);
+
+    backdrop-filter: blur(18px);
+
+    display: none;
+}
+
+.window.active {
+    display: block;
+    animation: openWindow .25s ease;
+}
+
+@keyframes openWindow {
+    from {
+        opacity: 0;
+        transform: scale(.96);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.window-header {
+    height: 42px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    padding: 0 13px;
+
+    background: rgba(15,20,25,.95);
+    border-bottom: 1px solid var(--line);
+
+    cursor: move;
+}
+
+.window-title {
+    font-family: Orbitron, sans-serif;
+    font-size: 10px;
+    letter-spacing: 2px;
+}
+
+.window-controls {
+    display: flex;
+    gap: 7px;
+}
+
+.window-controls button {
+    width: 18px;
+    height: 18px;
+
+    border: 1px solid #48535a;
+    background: transparent;
+    color: #aaa;
+
+    cursor: pointer;
+    font-size: 9px;
+}
+
+.window-controls button:hover {
+    color: white;
+    border-color: var(--pink);
+}
+
+.window-content {
+    padding: 25px;
+}
+
+/* =========================
+   IDENTITY
+========================= */
+
+.identity {
+    display: grid;
+    grid-template-columns: 150px 1fr;
+    gap: 25px;
+}
+
+.avatar {
+    height: 190px;
+    border: 1px solid var(--pink);
+    background:
+        radial-gradient(circle at 50% 40%, rgba(255,63,164,.25), transparent 35%),
+        linear-gradient(145deg, #12151c, #07080a);
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-family: Orbitron, sans-serif;
+    font-size: 55px;
+    color: var(--pink);
+
+    text-shadow: 0 0 30px var(--pink);
+}
+
+.identity h2 {
+    font-family: Orbitron, sans-serif;
+    font-size: 27px;
+    letter-spacing: 3px;
+}
+
+.alias {
+    color: var(--pink);
+    font-size: 10px;
+    margin: 5px 0 20px;
+}
+
+.data {
+    border-top: 1px solid #283038;
+}
+
+.data-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 9px 0;
+    border-bottom: 1px solid #1d2429;
+    font-size: 9px;
+}
+
+.data-row span:first-child {
+    color: var(--muted);
+}
+
+.online {
+    color: #75ff9b;
+}
+
+/* =========================
+   CITY MAP
+========================= */
+
+.map {
+    height: 340px;
+    position: relative;
+
+    background:
+        linear-gradient(rgba(121,246,255,.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(121,246,255,.05) 1px, transparent 1px),
+        #070a0d;
+
+    background-size: 35px 35px;
+    overflow: hidden;
+}
+
+.road {
+    position: absolute;
+    background: rgba(121,246,255,.08);
+}
+
+.road1 {
+    width: 100%;
+    height: 2px;
+    top: 48%;
+}
+
+.road2 {
+    height: 100%;
+    width: 2px;
+    left: 37%;
+}
+
+.road3 {
+    width: 70%;
+    height: 2px;
+    top: 20%;
+    transform: rotate(25deg);
+}
+
+.location {
+    position: absolute;
+    padding: 7px 9px;
+
+    border: 1px solid var(--cyan);
+    background: rgba(3,8,11,.9);
+
+    font-size: 8px;
+    color: var(--cyan);
+
+    cursor: pointer;
+    transition: .2s;
+}
+
+.location:hover {
+    background: var(--cyan);
+    color: #050608;
+    box-shadow: 0 0 25px rgba(121,246,255,.5);
+}
+
+.loc1 { left: 10%; top: 35%; }
+.loc2 { left: 45%; top: 12%; }
+.loc3 { right: 8%; top: 38%; }
+.loc4 { left: 25%; bottom: 15%; }
+.loc5 { right: 20%; bottom: 18%; }
+
+/* =========================
+   MUSIC
+========================= */
+
+.player {
+    text-align: center;
+}
+
+.album {
+    width: 170px;
+    height: 170px;
+    margin: 0 auto 25px;
+
+    border: 1px solid var(--pink);
+
+    background:
+        radial-gradient(circle, transparent 15%, rgba(255,63,164,.12) 16% 17%, transparent 18%),
+        repeating-radial-gradient(
+            circle,
+            #0a0d12 0 7px,
+            #121620 8px 10px
+        );
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-family: Orbitron, sans-serif;
+    font-size: 28px;
+    color: var(--pink);
+
+    animation: spinSlow 12s linear infinite;
+}
+
+@keyframes spinSlow {
+    to { transform: rotate(360deg); }
+}
+
+.song {
+    font-family: Orbitron, sans-serif;
+    letter-spacing: 2px;
+    font-size: 14px;
+}
+
+.artist {
+    color: var(--pink);
+    font-size: 9px;
+    margin-top: 7px;
+}
+
+.wave {
+    height: 45px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 4px;
+    margin: 20px 0;
+}
+
+.wave i {
+    display: block;
+    width: 3px;
+    height: 15px;
+    background: var(--cyan);
+    animation: wave .8s ease-in-out infinite alternate;
+}
+
+.wave i:nth-child(2) { animation-delay: .1s; }
+.wave i:nth-child(3) { animation-delay: .2s; }
+.wave i:nth-child(4) { animation-delay: .3s; }
+.wave i:nth-child(5) { animation-delay: .4s; }
+.wave i:nth-child(6) { animation-delay: .2s; }
+.wave i:nth-child(7) { animation-delay: .1s; }
+
+@keyframes wave {
+    to { height: 38px; }
+}
+
+.player button {
+    border: 1px solid var(--cyan);
+    background: transparent;
+    color: var(--cyan);
+    padding: 10px 25px;
+    font-family: inherit;
+    cursor: pointer;
+}
+
+.player button:hover {
+    background: var(--cyan);
+    color: #000;
+}
+
+/* =========================
+   MESSAGES
+========================= */
+
+.messages {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.message {
+    padding: 13px;
+    border: 1px solid #242d33;
+    background: rgba(255,255,255,.02);
+}
+
+.message strong {
+    color: var(--pink);
+    font-size: 9px;
+}
+
+.message p {
+    margin-top: 6px;
+    font-size: 10px;
+    color: #b9c0c4;
+}
+
+/* =========================
+   FILES
+========================= */
+
+.file {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+
+    padding: 13px;
+    border-bottom: 1px solid #222a2f;
+
+    cursor: pointer;
+}
+
+.file:hover {
+    background: rgba(121,246,255,.05);
+}
+
+.file-icon {
+    color: var(--cyan);
+    font-size: 18px;
+}
+
+.file-info strong {
+    display: block;
+    font-size: 9px;
+}
+
+.file-info small {
+    color: var(--muted);
+    font-size: 7px;
+}
+
+/* =========================
+   BROWSER
+========================= */
+
+.browser-bar {
+    display: flex;
+    gap: 7px;
+    margin-bottom: 15px;
+}
+
+.browser-bar input {
+    flex: 1;
+    background: #050607;
+    border: 1px solid #303940;
+    color: var(--cyan);
+    padding: 9px;
+    font-family: inherit;
+    font-size: 9px;
+}
+
+.browser-bar button {
+    background: transparent;
+    border: 1px solid var(--cyan);
+    color: var(--cyan);
+    padding: 0 15px;
+    cursor: pointer;
+}
+
+.browser-page {
+    min-height: 230px;
+    background: #07090b;
+    border: 1px solid #20272c;
+    padding: 20px;
+}
+
+.browser-page h2 {
+    font-family: Orbitron, sans-serif;
+    color: var(--pink);
+    margin-bottom: 15px;
+}
+
+/* =========================
+   STYLE
+========================= */
+
+.style-grid {
+    display: grid;
+    grid-template-columns: repeat(3,1fr);
+    gap: 10px;
+}
+
+.style-card {
+    height: 120px;
+    border: 1px solid #30383e;
+    display: flex;
+    align-items: end;
+    padding: 12px;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+}
+
+.style-card:hover {
+    border-color: var(--pink);
+}
+
+.style-card::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background:
+        linear-gradient(
+            135deg,
+            rgba(255,63,164,.2),
+            rgba(121,246,255,.05)
+        );
+}
+
+.style-card span {
+    position: relative;
+    font-family: Orbitron, sans-serif;
+    font-size: 9px;
+}
+
+/* =========================
+   SYSTEM
+========================= */
+
+.system-line {
+    display: flex;
+    justify-content: space-between;
+    padding: 12px 0;
+    border-bottom: 1px solid #222a2e;
+    font-size: 9px;
+}
+
+.good {
+    color: #74ff9a;
+}
+
+.warn {
+    color: var(--red);
+}
+
+/* =========================
+   SECRET MODE
+========================= */
+
+#override {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 20000;
+
+    background:
+        repeating-linear-gradient(
+            0deg,
+            rgba(255,0,80,.04) 0 2px,
+            transparent 2px 5px
+        ),
+        #080006;
+
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+.override-box {
+    width: 700px;
+    max-width: 90vw;
+    border: 1px solid var(--pink);
+    padding: 50px;
+    box-shadow: 0 0 100px rgba(255,63,164,.2);
+}
+
+.override-box h1 {
+    font-family: Orbitron, sans-serif;
+    font-size: clamp(45px, 10vw, 100px);
+    color: var(--pink);
+    text-shadow: 0 0 30px var(--pink);
+}
+
+.override-box p {
+    margin-top: 20px;
+    color: #aaa;
+    font-size: 10px;
+    line-height: 2;
+}
+
+.override-box button {
+    margin-top: 30px;
+    padding: 12px 25px;
+    background: transparent;
+    border: 1px solid var(--pink);
+    color: var(--pink);
+    font-family: inherit;
+    cursor: pointer;
+}
+
+/* =========================
+   TOAST
+========================= */
+
+#toast {
+    position: fixed;
+    right: 25px;
+    bottom: 25px;
+    z-index: 9000;
+
+    background: rgba(4,7,9,.95);
+    border: 1px solid var(--cyan);
+    color: var(--cyan);
+
+    padding: 15px 20px;
+
+    font-size: 9px;
+
+    opacity: 0;
+    transform: translateY(15px);
+    transition: .3s;
+}
+
+#toast.show {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* =========================
+   RESPONSIVE
+========================= */
+
+@media(max-width:700px) {
+
+    .status {
+        display: none;
+    }
+
+    .icons {
+        grid-template-columns: repeat(5, 70px);
+        top: auto;
+        bottom: 70px;
+        left: 50%;
+        transform: translateX(-50%);
+        gap: 8px;
+    }
+
+    .icon {
+        width: 65px;
+    }
+
+    .icon-symbol {
+        width: 43px;
+        height: 43px;
+    }
+
+    .clock {
+        bottom: 15px;
+        left: 15px;
+    }
+
+    .window {
+        left: 15px !important;
+        top: 75px !important;
+        width: calc(100vw - 30px);
+        max-height: calc(100vh - 160px);
+        overflow-y: auto;
+    }
+
+    .identity {
+        grid-template-columns: 1fr;
+    }
+
+    .avatar {
+        height: 130px;
+    }
+
+    .style-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<!-- =========================
+     BOOT
+========================= -->
+
+<div id="boot">
+
+    <div class="boot-title">
+        Z3<span>RA</span>
+    </div>
+
+    <div id="bootText"></div>
+
+    <div class="boot-bar">
+        <div class="boot-progress" id="progress"></div>
+    </div>
+
+</div>
+
+<!-- =========================
+     DESKTOP
+========================= -->
+
+<div id="desktop">
+
+    <div class="city">
+        <div class="sky"></div>
+
+        <div class="buildings">
+            <div class="building b1"></div>
+            <div class="building b2"></div>
+            <div class="building b3"></div>
+            <div class="building b4"></div>
+            <div class="building b5"></div>
+            <div class="building b6"></div>
+            <div class="building b7"></div>
+            <div class="building b8"></div>
+            <div class="building b9"></div>
+            <div class="building b10"></div>
+        </div>
+
+        <div class="grid"></div>
+    </div>
+
+    <!-- TOP BAR -->
+
+    <div class="topbar">
+
+        <div class="brand">
+            Z3<span>RA</span>
+        </div>
+
+        <div class="status">
+            NETWORK <b>CONNECTED</b>
+            SIGNAL <b>97%</b>
+            TRACE <b id="trace">00%</b>
+        </div>
+
+    </div>
+
+    <!-- ICONS -->
+
+    <div class="icons">
+
+        <div class="icon" onclick="openWindow('identity')">
+            <div class="icon-symbol">ID</div>
+            <div class="icon-name">IDENTITY</div>
+        </div>
+
+        <div class="icon" onclick="openWindow('music')">
+            <div class="icon-symbol">♫</div>
+            <div class="icon-name">RADIO</div>
+        </div>
+
+        <div class="icon" onclick="openWindow('style')">
+            <div class="icon-symbol">◇</div>
+            <div class="icon-name">STYLE</div>
+        </div>
+
+        <div class="icon" onclick="openWindow('messages')">
+            <div class="icon-symbol">◎</div>
+            <div class="icon-name">MESSAGES</div>
+        </div>
+
+        <div class="icon" onclick="openWindow('files')">
+            <div class="icon-symbol">▣</div>
+            <div class="icon-name">FILES</div>
+        </div>
+
+        <div class="icon" onclick="openWindow('browser')">
+            <div class="icon-symbol">⌁</div>
+            <div class="icon-name">NET</div>
+        </div>
+
+        <div class="icon" onclick="openWindow('map')">
+            <div class="icon-symbol">⌖</div>
+            <div class="icon-name">CITY</div>
+        </div>
+
+        <div class="icon" onclick="openWindow('system')">
+            <div class="icon-symbol">⚠</div>
+            <div class="icon-name">SYSTEM</div>
+        </div>
+
+    </div>
+
+    <!-- CLOCK -->
+
+    <div class="clock">
+        <div class="time" id="clock">03:17:00</div>
+        <div class="date">NIGHT DISTRICT // TERMINAL 07</div>
+    </div>
+
+    <!-- =========================
+         IDENTITY WINDOW
+    ========================= -->
+
+    <div class="window" id="identity"
+         style="left:25%; top:18%;">
+
+        <div class="window-header">
+
+            <div class="window-title">
+                Z3RA // IDENTITY
+            </div>
+
+            <div class="window-controls">
+                <button onclick="closeWindow('identity')">×</button>
+            </div>
+
+        </div>
+
+        <div class="window-content">
+
+            <div class="identity">
+
+                <div class="avatar">
+                    Z3
+                </div>
+
+                <div>
+
+                    <h2>Z3RA</h2>
+
+                    <div class="alias">
+                        @z3ra // USER_07
+                    </div>
+
+                    <div class="data">
+
+                        <div class="data-row">
+                            <span>STATUS</span>
+                            <span class="online">ONLINE</span>
+                        </div>
+
+                        <div class="data-row">
+                            <span>NETWORK</span>
+                            <span>NIGHT//NET</span>
+                        </div>
+
+                        <div class="data-row">
+                            <span>DISTRICT</span>
+                            <span>UNKNOWN</span>
+                        </div>
+
+                        <div class="data-row">
+                            <span>TRACE</span>
+                            <span id="identityTrace">00%</span>
+                        </div>
+
+                        <div class="data-row">
+                            <span>LAST SEEN</span>
+                            <span>03:17</span>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- =========================
+         MUSIC
+    ========================= -->
+
+    <div class="window" id="music"
+         style="left:55%; top:14%;">
+
+        <div class="window-header">
+
+            <div class="window-title">
+                Z3RA RADIO // 103.7 FM
+            </div>
+
+            <div class="window-controls">
+                <button onclick="closeWindow('music')">×</button>
+            </div>
+
+        </div>
+
+        <div class="window-content player">
+
+            <div class="album">
+                Z3RA
+            </div>
+
+            <div class="song" id="song">
+                AFTER DARK
+            </div>
+
+            <div class="artist">
+                NIGHT//NET TRANSMISSION
+            </div>
+
+            <div class="wave">
+
+                <i></i><i></i><i></i>
+                <i></i><i></i><i></i><i></i>
+
+            </div>
+
+            <button onclick="nextSong()">
+                NEXT TRANSMISSION →
+            </button>
+
+        </div>
+
+    </div>
+
+    <!-- =========================
+         STYLE
+    ========================= -->
+
+    <div class="window" id="style"
+         style="left:18%; top:35%;">
+
+        <div class="window-header">
+
+            <div class="window-title">
+                STYLE // CLOSET
+            </div>
+
+            <div class="window-controls">
+                <button onclick="closeWindow('style')">×</button>
+            </div>
+
+        </div>
+
+        <div class="window-content">
+
+            <div class="style-grid">
+
+                <div class="style-card" onclick="stylePick('CHROME')">
+                    <span>CHROME</span>
+                </div>
+
+                <div class="style-card" onclick="stylePick('NIGHT')">
+                    <span>NIGHT</span>
+                </div>
+
+                <div class="style-card" onclick="stylePick('VOID')">
+                    <span>VOID</span>
+                </div>
+
+                <div class="style-card" onclick="stylePick('NEON')">
+                    <span>NEON</span>
+                </div>
+
+                <div class="style-card" onclick="stylePick('STREET')">
+                    <span>STREET</span>
+                </div>
+
+                <div class="style-card" onclick="stylePick('CORRUPT')">
+                    <span>CORRUPT</span>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- =========================
+         MESSAGES
+    ========================= -->
+
+    <div class="window" id="messages"
+         style="left:45%; top:35%;">
+
+        <div class="window-header">
+
+            <div class="window-title">
+                NETWORK // MESSAGES
+            </div>
+
+            <div class="window-controls">
+                <button onclick="closeWindow('messages')">×</button>
+            </div>
+
+        </div>
+
+        <div class="window-content messages">
+
+            <div class="message">
+                <strong>VEX // ONLINE</strong>
+                <p>you disappeared again.</p>
+            </div>
+
+            <div class="message">
+                <strong>UNKNOWN // OFFLINE</strong>
+                <p>don't go to sector 09.</p>
+            </div>
+
+            <div class="message">
+                <strong>ZERO // AWAY</strong>
+                <p>left something for you at the station.</p>
+            </div>
+
+            <div class="message">
+                <strong>SYSTEM</strong>
+                <p>new connection detected.</p>
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- =========================
+         FILES
+    ========================= -->
+
+    <div class="window" id="files"
+         style="left:32%; top:22%;">
+
+        <div class="window-header">
+
+            <div class="window-title">
+                Z3RA // FILE SYSTEM
+            </div>
+
+            <div class="window-controls">
+                <button onclick="closeWindow('files')">×</button>
+            </div>
+
+        </div>
+
+        <div class="window-content">
+
+            <div class="file" onclick="fileOpen('PHOTO_0317.JPG')">
+                <div class="file-icon">▧</div>
+                <div class="file-info">
+                    <strong>PHOTO_0317.JPG</strong>
+                    <small>2.7 MB // IMAGE</small>
+                </div>
+            </div>
+
+            <div class="file" onclick="fileOpen('VOICE_07.MP3')">
+                <div class="file-icon">♫</div>
+                <div class="file-info">
+                    <strong>VOICE_07.MP3</strong>
+                    <small>4.1 MB // AUDIO</small>
+                </div>
+            </div>
+
+            <div class="file" onclick="fileOpen('CITY_MAP.DAT')">
+                <div class="file-icon">⌖</div>
+                <div class="file-info">
+                    <strong>CITY_MAP.DAT</strong>
+                    <small>UNKNOWN // DATA</small>
+                </div>
+            </div>
+
+            <div class="file" onclick="fileOpen('MEMORY_004.TXT')">
+                <div class="file-icon">▤</div>
+                <div class="file-info">
+                    <strong>MEMORY_004.TXT</strong>
+                    <small>UNKNOWN // CORRUPTED</small>
+                </div>
+            </div>
+
+            <div class="file" onclick="fileOpen('DO_NOT_OPEN.EXE')">
+                <div class="file-icon">⚠</div>
+                <div class="file-info">
+                    <strong>DO_NOT_OPEN.EXE</strong>
+                    <small>WARNING // EXECUTABLE</small>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- =========================
+         BROWSER
+    ========================= -->
+
+    <div class="window" id="browser"
+         style="left:24%; top:25%;">
+
+        <div class="window-header">
+
+            <div class="window-title">
+                NIGHT//NET BROWSER
+            </div>
+
+            <div class="window-controls">
+                <button onclick="closeWindow('browser')">×</button>
+            </div>
+
+        </div>
+
+        <div class="window-content">
+
+            <div class="browser-bar">
+
+                <input
+                    id="browserInput"
+                    value="nightnet://home"
+                >
+
+                <button onclick="browse()">
+                    GO
+                </button>
+
+            </div>
+
+            <div class="browser-page" id="browserPage">
+
+                <h2>NIGHT//NET</h2>
+
+                <p>
+                    CONNECTION ESTABLISHED.
+                </p>
+
+                <br>
+
+                <p style="color:#68747c;">
+                    Search the network.
+                    Some addresses don't exist.
+                </p>
+
+                <br>
+
+                <p>
+                    TRY:
+                </p>
+
+                <br>
+
+                <p style="color:#79f6ff;">
+                    nightnet://void
+                    <br>
+                    nightnet://radio
+                    <br>
+                    nightnet://sector09
+                    <br>
+                    nightnet://z3ra
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- =========================
+         CITY MAP
+    ========================= -->
+
+    <div class="window" id="map"
+         style="left:37%; top:15%;">
+
+        <div class="window-header">
+
+            <div class="window-title">
+                CITY // LIVE MAP
+            </div>
+
+            <div class="window-controls">
+                <button onclick="closeWindow('map')">×</button>
+            </div>
+
+        </div>
+
+        <div class="window-content">
+
+            <div class="map">
+
+                <div class="road road1"></div>
+                <div class="road road2"></div>
+                <div class="road road3"></div>
+
+                <div class="location loc1"
+                     onclick="locationAlert('NEON MARKET')">
+                    NEON MARKET
+                </div>
+
+                <div class="location loc2"
+                     onclick="locationAlert('SECTOR 09')">
+                    SECTOR 09
+                </div>
+
+                <div class="location loc3"
+                     onclick="locationAlert('AFTERHOURS')">
+                    AFTERHOURS
+                </div>
+
+                <div class="location loc4"
+                     onclick="locationAlert('MEGABLOCK 17')">
+                    MEGABLOCK 17
+                </div>
+
+                <div class="location loc5"
+                     onclick="locationAlert('REDLINE')">
+                    REDLINE
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- =========================
+         SYSTEM
+    ========================= -->
+
+    <div class="window" id="system"
+         style="left:50%; top:20%;">
+
+        <div class="window-header">
+
+            <div class="window-title">
+                SYSTEM // DIAGNOSTICS
+            </div>
+
+            <div class="window-controls">
+                <button onclick="closeWindow('system')">×</button>
+            </div>
+
+        </div>
+
+        <div class="window-content">
+
+            <div class="system-line">
+                <span>CORE</span>
+                <span class="good">STABLE</span>
+            </div>
+
+            <div class="system-line">
+                <span>NEURAL LINK</span>
+                <span class="good">CONNECTED</span>
+            </div>
+
+            <div class="system-line">
+                <span>CITY NETWORK</span>
+                <span class="good">ONLINE</span>
+            </div>
+
+            <div class="system-line">
+                <span>TRACE</span>
+                <span id="systemTrace">00%</span>
+            </div>
+
+            <div class="system-line">
+                <span>UNKNOWN PROCESS</span>
+                <span class="warn">RUNNING</span>
+            </div>
+
+            <br>
+
+            <button
+                onclick="overrideSystem()"
+                style="
+                width:100%;
+                padding:12px;
+                background:transparent;
+                color:#ff365c;
+                border:1px solid #ff365c;
+                font-family:inherit;
+                cursor:pointer;">
+                INITIATE SYSTEM OVERRIDE
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- =========================
+     OVERRIDE
+========================= -->
+
+<div id="override">
+
+    <div class="override-box">
+
+        <h1>Z3RA</h1>
+
+        <p>
+            SYSTEM OVERRIDE COMPLETE.
+            <br><br>
+            YOU HAVE ENTERED THE UNAUTHORIZED LAYER.
+            <br>
+            TERMINAL 07 IS NO LONGER PRIVATE.
+            <br><br>
+            TRACE STATUS: UNKNOWN
+        </p>
+
+        <button onclick="exitOverride()">
+            RETURN TO SYSTEM
+        </button>
+
+    </div>
+
+</div>
+
+<div id="toast"></div>
+
+<script>
+
+/* =========================
+   BOOT SEQUENCE
+========================= */
+
+const bootLines = [
+    "INITIALIZING Z3RA OS...",
+    "LOADING PERSONAL TERMINAL...",
+    "CONNECTING TO CITY NETWORK...",
+    "NEURAL LINK ............ OK",
+    "IDENTITY ............... FOUND",
+    "NIGHT//NET ............. CONNECTED",
+    "SECURITY ............... BYPASSED",
+    "WELCOME BACK, Z3RA."
+];
+
+let bootIndex = 0;
+
+const bootText = document.getElementById("bootText");
+const progress = document.getElementById("progress");
+
+function boot() {
+
+    if (bootIndex < bootLines.length) {
+
+        bootText.innerHTML +=
+            bootLines[bootIndex] + "<br>";
+
+        progress.style.width =
+            ((bootIndex + 1) / bootLines.length * 100) + "%";
+
+        bootIndex++;
+
+        setTimeout(boot, 350);
+
+    } else {
+
+        setTimeout(() => {
+
+            document.getElementById("boot").style.display = "none";
+
+            document.getElementById("desktop").style.opacity = "1";
+
+        }, 800);
+
+    }
+
+}
+
+setTimeout(boot, 600);
+
+
+/* =========================
+   WINDOWS
+========================= */
+
+let zIndex = 100;
+
+function openWindow(id) {
+
+    const win = document.getElementById(id);
+
+    win.classList.add("active");
+
+    zIndex++;
+
+    win.style.zIndex = zIndex;
+
+}
+
+function closeWindow(id) {
+
+    document.getElementById(id)
+        .classList.remove("active");
+
+}
+
+
+/* =========================
+   DRAGGABLE WINDOWS
+========================= */
+
+document.querySelectorAll(".window").forEach(win => {
+
+    const header = win.querySelector(".window-header");
+
+    let dragging = false;
+    let offsetX = 0;
+    let offsetY = 0;
+
+    header.addEventListener("mousedown", e => {
+
+        dragging = true;
+
+        zIndex++;
+
+        win.style.zIndex = zIndex;
+
+        offsetX = e.clientX - win.offsetLeft;
+        offsetY = e.clientY - win.offsetTop;
+
+    });
+
+    document.addEventListener("mousemove", e => {
+
+        if (!dragging) return;
+
+        win.style.left =
+            (e.clientX - offsetX) + "px";
+
+        win.style.top =
+            (e.clientY - offsetY) + "px";
+
+    });
+
+    document.addEventListener("mouseup", () => {
+
+        dragging = false;
+
+    });
+
+});
+
+
+/* =========================
+   CLOCK
+========================= */
+
+function updateClock() {
+
+    const now = new Date();
+
+    const h = String(now.getHours()).padStart(2,"0");
+    const m = String(now.getMinutes()).padStart(2,"0");
+    const s = String(now.getSeconds()).padStart(2,"0");
+
+    document.getElementById("clock").textContent =
+        `${h}:${m}:${s}`;
+
+}
+
+setInterval(updateClock,1000);
+updateClock();
+
+
+/* =========================
+   RADIO
+========================= */
+
+const songs = [
+    "AFTER DARK",
+    "CHROME ANGEL",
+    "NIGHT DRIVE",
+    "DIGITAL HEART",
+    "03:17 AM",
+    "CITY LIGHTS",
+    "LAST TRANSMISSION"
+];
+
+let songIndex = 0;
+
+function nextSong() {
+
+    songIndex++;
+
+    if(songIndex >= songs.length)
+        songIndex = 0;
+
+    document.getElementById("song").textContent =
+        songs[songIndex];
+
+    toast(
+        "NOW PLAYING // " + songs[songIndex]
+    );
+
+}
+
+
+/* =========================
+   STYLE
+========================= */
+
+function stylePick(style) {
+
+    toast(
+        "STYLE LOADED // " + style
+    );
+
+}
+
+
+/* =========================
+   FILES
+========================= */
+
+function fileOpen(file) {
+
+    if(file === "DO_NOT_OPEN.EXE") {
+
+        toast(
+            "ACCESS DENIED // NICE TRY"
+        );
+
+        increaseTrace();
+
+        return;
+    }
+
+    if(file === "MEMORY_004.TXT") {
+
+        toast(
+            "FILE CORRUPTED // FRAGMENT RECOVERED"
+        );
+
+        increaseTrace();
+
+        return;
+    }
+
+    toast(
+        "OPENING // " + file
+    );
+
+}
+
+
+/* =========================
+   BROWSER
+========================= */
+
+function browse() {
+
+    const input =
+        document.getElementById("browserInput")
+        .value
+        .toLowerCase()
+        .trim();
+
+    const page =
+        document.getElementById("browserPage");
+
+    if(input.includes("void")) {
+
+        page.innerHTML = `
+            <h2>VOID</h2>
+            <p>NO USERS.</p>
+            <br>
+            <p style="color:#ff3fa4;">
+            THERE IS NOTHING HERE.
+            </p>
+        `;
+
+        increaseTrace();
+
+    }
+
+    else if(input.includes("radio")) {
+
+        page.innerHTML = `
+            <h2>RADIO 103.7</h2>
+            <p>TRANSMISSION ACTIVE.</p>
+            <br>
+            <p style="color:#79f6ff;">
+            SIGNAL LOCKED TO Z3RA.
+            </p>
+        `;
+
+    }
+
+    else if(input.includes("sector09")) {
+
+        page.innerHTML = `
+            <h2>SECTOR 09</h2>
+            <p>ACCESS RESTRICTED.</p>
+            <br>
+            <p style="color:#ff365c;">
+            YOU SHOULD NOT BE HERE.
+            </p>
+        `;
+
+        increaseTrace();
+        increaseTrace();
+
+    }
+
+    else if(input.includes("z3ra")) {
+
+        page.innerHTML = `
+            <h2>Z3RA</h2>
+            <p>USER PROFILE FOUND.</p>
+            <br>
+            <p style="color:#79f6ff;">
+            CONNECTION: PRIVATE
+            </p>
+        `;
+
+    }
+
+    else {
+
+        page.innerHTML = `
+            <h2>404</h2>
+            <p>ADDRESS NOT FOUND.</p>
+            <br>
+            <p style="color:#68747c;">
+            TRY ANOTHER FREQUENCY.
+            </p>
+        `;
+
+    }
+
+}
+
+
+/* =========================
+   MAP
+========================= */
+
+function locationAlert(name) {
+
+    toast(
+        "LOCATION SELECTED // " + name
+    );
+
+    if(name === "SECTOR 09") {
+
+        increaseTrace();
+        increaseTrace();
+
+    }
+
+}
+
+
+/* =========================
+   TRACE SYSTEM
+========================= */
+
+let trace = 0;
+
+function increaseTrace() {
+
+    trace += Math.floor(Math.random() * 4) + 1;
+
+    if(trace > 100)
+        trace = 100;
+
+    document.getElementById("trace").textContent =
+        trace + "%";
+
+    document.getElementById("identityTrace").textContent =
+        trace + "%";
+
+    document.getElementById("systemTrace").textContent =
+        trace + "%";
+
+    if(trace >= 50) {
+
+        toast(
+            "WARNING // TRACE LEVEL HIGH"
+        );
+
+    }
+
+}
+
+
+/* =========================
+   SYSTEM OVERRIDE
+========================= */
+
+function overrideSystem() {
+
+    document.getElementById("override").style.display =
+        "flex";
+
+}
+
+function exitOverride() {
+
+    document.getElementById("override").style.display =
+        "none";
+
+}
+
+
+/* =========================
+   TOAST
+========================= */
+
+let toastTimer;
+
+function toast(message) {
+
+    const t =
+        document.getElementById("toast");
+
+    t.textContent = message;
+
+    t.classList.add("show");
+
+    clearTimeout(toastTimer);
+
+    toastTimer = setTimeout(() => {
+
+        t.classList.remove("show");
+
+    }, 2500);
+
+}
+
+
+/* =========================
+   KEYBOARD SECRETS
+========================= */
+
+let secret = "";
+
+document.addEventListener("keydown", e => {
+
+    secret += e.key.toLowerCase();
+
+    if(secret.length > 20)
+        secret = secret.slice(-20);
+
+    if(secret.includes("z3ra")) {
+
+        toast(
+            "SECRET COMMAND ACCEPTED"
+        );
+
+        increaseTrace();
+
+        secret = "";
+
+    }
+
+    if(secret.includes("override")) {
+
+        overrideSystem();
+
+        secret = "";
+
+    }
+
+});
+
+
+/* =========================
+   RANDOM SYSTEM EVENTS
+========================= */
+
+setInterval(() => {
+
+    const events = [
+        "UNKNOWN DEVICE DETECTED",
+        "CITY NETWORK PING",
+        "SIGNAL FLUCTUATION",
+        "NEW MESSAGE RECEIVED",
+        "BACKGROUND PROCESS ACTIVE"
+    ];
+
+    const event =
+        events[Math.floor(Math.random() * events.length)];
+
+    toast(event);
+
+}, 18000);
+
+</script>
+
+</body>
+</html>
+```
