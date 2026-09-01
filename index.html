@@ -974,7 +974,43 @@ body::after {
         grid-template-columns: 1fr 1fr;
     }
 }
-</style>
+</style> .music-links {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 18px;
+}
+
+.music-links a {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 13px 15px;
+  color: #dfe4e7;
+  text-decoration: none;
+  background: rgba(255,255,255,.025);
+  border: 1px solid rgba(121,246,255,.15);
+  font-family: monospace;
+  transition: .2s ease;
+}
+
+.music-links a:hover {
+  background: rgba(121,246,255,.08);
+  border-color: #79f6ff;
+  transform: translateX(4px);
+  box-shadow: 0 0 15px rgba(121,246,255,.12);
+}
+
+.music-links span {
+  font-size: 12px;
+  letter-spacing: 2px;
+}
+
+.music-links small {
+  color: #ff3fa4;
+  font-size: 8px;
+  letter-spacing: 1px;
+}
 </head>
 
 <body>
@@ -1050,6 +1086,32 @@ body::after {
         <div class="icon" onclick="openWindow('music')">
             <div class="icon-symbol">♫</div>
             <div class="icon-name">RADIO</div>
+            <div class="music-links">
+  <a href="https://www.youtube.com/results?search_query=Cult+Member+artist" target="_blank">
+    <span>CULT MEMBER</span>
+    <small>TRANSMISSION_01</small>
+  </a>
+
+  <a href="https://www.youtube.com/results?search_query=FENG+artist" target="_blank">
+    <span>FENG</span>
+    <small>TRANSMISSION_02</small>
+  </a>
+
+  <a href="https://www.youtube.com/results?search_query=Radiohead" target="_blank">
+    <span>RADIOHEAD</span>
+    <small>TRANSMISSION_03</small>
+  </a>
+
+  <a href="https://www.youtube.com/results?search_query=Crystal+Castles" target="_blank">
+    <span>CRYSTAL CASTLES</span>
+    <small>TRANSMISSION_04</small>
+  </a>
+
+  <a href="https://www.youtube.com/results?search_query=Snow+Strippers" target="_blank">
+    <span>SNOW STRIPPERS</span>
+    <small>TRANSMISSION_05</small>
+  </a>
+</div>
         </div>
 
         <div class="icon" onclick="openWindow('style')">
