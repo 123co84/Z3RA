@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <defs>
+    <linearGradient id="chrome" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#ffffff"/>
+      <stop offset=".18" stop-color="#7d858c"/>
+      <stop offset=".38" stop-color="#f5f7f8"/>
+      <stop offset=".55" stop-color="#434a50"/>
+      <stop offset=".72" stop-color="#dfe4e7"/>
+      <stop offset="1" stop-color="#666d73"/>
+    </linearGradient>
+
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="1.5" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <rect width="100" height="100" rx="20" fill="#030608"/>
+
+  <g filter="url(#glow)">
+    <path
+      d="M20 27 L48 18 L79 27 L62 43 L82 73 L54 82 L21 69 L39 51 Z"
+      fill="url(#chrome)"
+      stroke="#ffffff"
+      stroke-width="1.5"
+      stroke-linejoin="bevel"
+    />
+
+    <path d="M48 18 L39 51 L62 43 Z" fill="#030608"/>
+
+    <path d="M39 51 L21 69 L54 82 L62 43 Z" fill="#343b40"/>
+
+    <path d="M62 43 L79 27 L82 73 L54 82 Z" fill="#aeb5ba"/>
+
+    <path
+      d="M65 31 L76 28 L67 37"
+      fill="#ff3fa4"
+    />
+  </g>
+</svg>
